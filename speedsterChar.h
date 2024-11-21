@@ -1,10 +1,10 @@
-// MySpeedsterCharacter.h
+// speedsterChar.h
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "MySpeedsterCharacter.generated.h"
+#include "speedsterChar.generated.h"
 
 // Forward declarations
 class UNiagaraComponent;
@@ -27,13 +27,13 @@ struct FGhostTrailData
 };
 
 UCLASS()
-class YOURGAME_API AMySpeedsterCharacter : public ACharacter
+class YOURGAME_API AspeedsterChar : public ACharacter
 {
     GENERATED_BODY()
 
 public:
     // Constructor
-    AMySpeedsterCharacter();
+    AspeedsterChar();
 
 protected:
     // Called when the game starts or when spawned
@@ -132,12 +132,6 @@ protected:
     TArray<FGhostTrailData> Ghosts;
     bool bGhostTrailActive;
 
-    // Functions for ghost trail
-    void UpdateGhostTrail(float DeltaTime);
-    void SpawnGhost();
-    void ActivateGhostTrail();
-    void DeactivateGhostTrail();
-
     // Speed threshold for activating effects
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
     float EffectActivationSpeed;
@@ -161,6 +155,10 @@ protected:
     void UpdateDistortionEffect();
     void ActivateSpeedEffects();
     void DeactivateSpeedEffects();
+    void ActivateGhostTrail();
+    void DeactivateGhostTrail();
+    void UpdateGhostTrail(float DeltaTime);
+    void SpawnGhost();
 
 public:
     // Called every frame
