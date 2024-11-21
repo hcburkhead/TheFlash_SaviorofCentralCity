@@ -1,6 +1,6 @@
-// MySpeedsterCharacter.cpp
+// speedsterChar.cpp
 
-#include "MySpeedsterCharacter.h"
+#include "speedsterChar.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -16,8 +16,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
 
-AMySpeedsterCharacter::AMySpeedsterCharacter()
+AspeedsterChar::AspeedsterChar()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -67,7 +69,7 @@ AMySpeedsterCharacter::AMySpeedsterCharacter()
     PostProcessComponent->SetupAttachment(RootComponent);
 }
 
-void AMySpeedsterCharacter::BeginPlay()
+void AspeedsterChar::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -100,7 +102,7 @@ void AMySpeedsterCharacter::BeginPlay()
     GetCharacterMovement()->MaxWalkSpeed = InitialSpeed;
 }
 
-void AMySpeedsterCharacter::Tick(float DeltaTime)
+void AspeedsterChar::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
@@ -151,7 +153,7 @@ void AMySpeedsterCharacter::Tick(float DeltaTime)
     }
 }
 
-void AMySpeedsterCharacter::IncreaseSpeed(float DeltaTime)
+void AspeedsterChar::IncreaseSpeed(float DeltaTime)
 {
     CurrentSpeed += SpeedIncreaseRate * DeltaTime;
     CurrentSpeed = FMath::Clamp(CurrentSpeed, InitialSpeed, MaxSpeed);
@@ -160,7 +162,7 @@ void AMySpeedsterCharacter::IncreaseSpeed(float DeltaTime)
     // Optionally adjust Field of View (FOV) or add visual effects here
 }
 
-void AMySpeedsterCharacter::CheckForWall()
+void AspeedsterChar::CheckForWall()
 {
     FVector Start = GetActorLocation();
     FVector ForwardDirection = GetActorForwardVector();
@@ -196,7 +198,7 @@ void AMySpeedsterCharacter::CheckForWall()
     }
 }
 
-void AMySpeedsterCharacter::StartWallRun(const FVector& WallNormal)
+void AspeedsterChar::StartWallRun(const FVector& WallNormal)
 {
     if (!bIsWallRunning)
     {
@@ -217,7 +219,7 @@ void AMySpeedsterCharacter::StartWallRun(const FVector& WallNormal)
     AddMovementInput(WallRunDirection, WallRunSpeedMultiplier);
 }
 
-void AMySpeedsterCharacter::StopWallRun()
+void AspeedsterChar::StopWallRun()
 {
     bIsWallRunning = false;
 
@@ -227,7 +229,7 @@ void AMySpeedsterCharacter::StopWallRun()
     // Optionally reset character orientation here
 }
 
-void AMySpeedsterCharacter::PerformAttack()
+void AspeedsterChar::PerformAttack()
 {
     // Define the range and radius for detecting enemies
     float AttackRange = 1000.f;
@@ -285,21 +287,21 @@ void AMySpeedsterCharacter::PerformAttack()
     }
 }
 
-void AMySpeedsterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AspeedsterChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
     // Axis bindings
-    PlayerInputComponent->BindAxis("MoveForward", this, &AMySpeedsterCharacter::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &AMySpeedsterCharacter::MoveRight);
+    PlayerInputComponent->BindAxis("MoveForward", this, &AspeedsterChar::MoveForward);
+    PlayerInputComponent->BindAxis("MoveRight", this, &AspeedsterChar::MoveRight);
 
     // Action bindings
-    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AMySpeedsterCharacter::StartJump);
-    PlayerInputComponent->BindAction("Jump", IE_Released, this, &AMySpeedsterCharacter::StopJump);
-    PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AMySpeedsterCharacter::OnAttackPressed);
+    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AspeedsterChar::StartJump);
+    PlayerInputComponent->BindAction("Jump", IE_Released, this, &AspeedsterChar::StopJump);
+    PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &AspeedsterChar::OnAttackPressed);
 }
 
-void AMySpeedsterCharacter::MoveForward(float Value)
+void AspeedsterChar::MoveForward(float Value)
 {
     if (Controller && Value != 0.0f)
     {
@@ -313,7 +315,7 @@ void AMySpeedsterCharacter::MoveForward(float Value)
     }
 }
 
-void AMySpeedsterCharacter::MoveRight(float Value)
+void AspeedsterChar::MoveRight(float Value)
 {
     if (Controller && Value != 0.0f)
     {
@@ -327,22 +329,22 @@ void AMySpeedsterCharacter::MoveRight(float Value)
     }
 }
 
-void AMySpeedsterCharacter::StartJump()
+void AspeedsterChar::StartJump()
 {
     Jump();
 }
 
-void AMySpeedsterCharacter::StopJump()
+void AspeedsterChar::StopJump()
 {
     StopJumping();
 }
 
-void AMySpeedsterCharacter::OnAttackPressed()
+void AspeedsterChar::OnAttackPressed()
 {
     PerformAttack();
 }
 
-void AMySpeedsterCharacter::StartDistortionEffect()
+void AspeedsterChar::StartDistortionEffect()
 {
     if (bIsDistortionEffectActive)
     {
@@ -369,10 +371,10 @@ void AMySpeedsterCharacter::StartDistortionEffect()
     }
 
     // Start timer to update the effect
-    GetWorldTimerManager().SetTimer(DistortionEffectTimerHandle, this, &AMySpeedsterCharacter::UpdateDistortionEffect, 0.01f, true);
+    GetWorldTimerManager().SetTimer(DistortionEffectTimerHandle, this, &AspeedsterChar::UpdateDistortionEffect, 0.01f, true);
 }
 
-void AMySpeedsterCharacter::UpdateDistortionEffect()
+void AspeedsterChar::UpdateDistortionEffect()
 {
     DistortionEffectElapsedTime += 0.01f; // Increment time by timer interval
 
@@ -386,13 +388,16 @@ void AMySpeedsterCharacter::UpdateDistortionEffect()
     }
 
     // Get distortion strength from the curve
-    float DistortionStrength = DistortionIntensityCurve->GetFloatValue(DistortionEffectElapsedTime / DistortionEffectDuration);
+    if (DistortionIntensityCurve)
+    {
+        float DistortionStrength = DistortionIntensityCurve->GetFloatValue(DistortionEffectElapsedTime / DistortionEffectDuration);
 
-    // Update the material parameter
-    DynamicDistortionMaterial->SetScalarParameterValue(FName("DistortionStrength"), DistortionStrength);
+        // Update the material parameter
+        DynamicDistortionMaterial->SetScalarParameterValue(FName("DistortionStrength"), DistortionStrength);
+    }
 }
 
-void AMySpeedsterCharacter::ActivateSpeedEffects()
+void AspeedsterChar::ActivateSpeedEffects()
 {
     bEffectsActive = true;
     SpeedAuraComponent->Activate();
@@ -400,7 +405,7 @@ void AMySpeedsterCharacter::ActivateSpeedEffects()
     StartDistortionEffect();
 }
 
-void AMySpeedsterCharacter::DeactivateSpeedEffects()
+void AspeedsterChar::DeactivateSpeedEffects()
 {
     bEffectsActive = false;
     SpeedAuraComponent->Deactivate();
@@ -408,13 +413,13 @@ void AMySpeedsterCharacter::DeactivateSpeedEffects()
     StartDistortionEffect(); // Trigger distortion effect when stopping
 }
 
-void AMySpeedsterCharacter::ActivateGhostTrail()
+void AspeedsterChar::ActivateGhostTrail()
 {
     bGhostTrailActive = true;
     GhostSpawnTimer = 0.0f;
 }
 
-void AMySpeedsterCharacter::DeactivateGhostTrail()
+void AspeedsterChar::DeactivateGhostTrail()
 {
     bGhostTrailActive = false;
 
@@ -429,7 +434,7 @@ void AMySpeedsterCharacter::DeactivateGhostTrail()
     Ghosts.Empty();
 }
 
-void AMySpeedsterCharacter::UpdateGhostTrail(float DeltaTime)
+void AspeedsterChar::UpdateGhostTrail(float DeltaTime)
 {
     GhostSpawnTimer += DeltaTime;
 
@@ -466,7 +471,7 @@ void AMySpeedsterCharacter::UpdateGhostTrail(float DeltaTime)
     }
 }
 
-void AMySpeedsterCharacter::SpawnGhost()
+void AspeedsterChar::SpawnGhost()
 {
     if (!GetMesh())
     {
